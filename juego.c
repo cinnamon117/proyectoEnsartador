@@ -5,6 +5,7 @@
 extern char convertir_a_ascii(int valor);
 
 //variables globales (para no complicar paso de parametros)
+static int *mapa_actual;
 
 static int jugador_fila;
 static int jugador_columna;
