@@ -3,7 +3,6 @@
 #include "mapas.h"
 #include "juego.h"
 
-//pon aqui solo UN mapa para probar
 extern int mapa_facil[60][60];
 
 int main(){
