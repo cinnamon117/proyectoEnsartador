@@ -1,84 +1,86 @@
 bits 64
-default rel 
+default rel
 
-global.....
+global convertir_a_ascii
+global validar_movimiento
+global contar_elemento
 
-;recibimos en la matriz los numeros 0,1,2,3,4,5,6
-; # = 0 Pared.
-; . = 1 Camino libre.
-; P = 2 Jugador.
-; M = 3 Moneda.
-; K = 4 Llave.
-; D = 5 Puerta.
-; E = 6 Salida.
 section .text
-;El mapa se genera como el programa de pixel art
-generar_mapa:
-    ;verificamos que no este vacía
-    cmp r8d, 0
-    jle .salida_vacia
-    cmp r9d, 0
-    jle .salida_vacia
 
-    ;contador de filas
-    mov r10d, r8d
-    .fila_loop:
-    ;contador para las columnas
-    mov r11d, r9d
+;-----------------------------
+convertir_a_ascii:
+    cmp ecx, 0
+    je .pared
+    cmp ecx, 1
+    je .camino
+    cmp ecx, 2
+    je .jugador
+    cmp ecx, 3
+    je .moneda
+    cmp ecx, 4
+    je .llave
+    cmp ecx, 5
+    je .puerta
+    cmp ecx, 6
+    je .salida
 
-    .columnas_loop:
-    mov eax, [rcx]  ;valor actual de la matriz
+    mov al, '?'
+    ret
 
-    cmp eax, 0
-    je .valor_0
-    cmp eax, 1
-    je .valor_1
-    cmp eax, 2
-    je .valor_2
-    cmp eax, 3
-    je .valor_3
-    cmp eax, 4
-    je .valor_4
-    cmp eax, 5
-    je .valor_5
+.pared:    mov al, 219   ;█
+           ret
+.camino:   mov al, 176   ;░
+           ret
+.jugador:  mov al, 'P'
+           ret
+.moneda:   mov al, 'M'
+           ret
+.llave:    mov al, 'K'
+           ret
+.puerta:   mov al, 'D'
+           ret
+.salida:   mov al, 'E'
+           ret
 
-    mov al, 219
-    jmp .escribir_bloque
+;-----------------------------
+; validar movimiento
+validar_movimiento:
+    mov eax, r8d
+    imul eax, edx
+    add eax, r9d
 
-    .valor_0:
-    mov al, 32
-    jmp .escribir_bloque
-    .valor_1:
-    mov al, 176
-    jmp .escribir_bloque
-    .valor_2:
-    mov al, 177
-    jmp .escribir_bloque
-    .valor_3:
-    mov al, 178
-    jmp .escribir_bloque 
+    mov r10d, [rcx + rax*4]
 
-    .escribir_bloque:
-    mov [rdx], al 
-    mov [rdx + 1], al 
+    cmp r10d, 0
+    je .bloqueado
 
-    ;avanzar salida y matriz
-    add rcx, 4 ;matriz
-    add rdx, 2 ;vector de salida
+    mov eax, 1
+    ret
 
-    ;siguiente columna
-    dec r11d
-    jnz .columnas_loop
+.bloqueado:
+    xor eax, eax
+    ret
 
-    mov byte [rdx], 10
-    inc rdx
+;-----------------------------
+; contar elementos
+contar_elemento:
+    xor eax, eax
+    xor r9d, r9d
 
-    dec r10d
-    jnz .fila_loop
+.loop:
+    cmp r9d, edx
+    jge .fin
 
-    mov byte [rdx], 0
-    ret 
+    mov r10d, [rcx + r9*4]
 
-    .salida_vacia:
-    mov byte [rdx], 0
-    ret 
+    cmp r10d, r8d
+    jne .sig
+
+    inc eax
+
+.sig:
+    inc r9d
+    jmp .loop
+
+.fin:
+    ret

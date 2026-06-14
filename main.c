@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "mapas.h"
-#include "juego.h"
+#include <conio.h>
 
-extern int mapa_facil[60][60];
+#include "juego.h"
+#include "mapas.h"
 
 int main(){
 
@@ -16,13 +16,13 @@ int main(){
 
         mostrar_ventana();
 
-        printf("\nWASD para mover, Q para salir\n");
+        char tecla = _getch();
 
-        char tecla;
-        scanf(" %c", &tecla);
+        if(tecla=='q' || tecla=='Q'){
+            printf("\nSeguro que quieres salir? (S/N): ");
+            char c = _getch();
 
-        if(tecla == 'q' || tecla == 'Q'){
-            break;
+            if(c=='s' || c=='S') break;
         }
 
         mover_jugador(tecla);
