@@ -8,5 +8,9 @@
 void iniciar_nivel(int *mapa);
 void mostrar_ventana();
 void mover_jugador(char tecla);
+int nivel_completado();
+int obtener_monedas();
+int obtener_pasos();
+int obtener_total_monedas();
 
 #endif
